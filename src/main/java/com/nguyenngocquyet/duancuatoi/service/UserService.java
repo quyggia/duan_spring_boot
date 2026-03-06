@@ -3,7 +3,10 @@ package com.nguyenngocquyet.duancuatoi.service;
 
 import com.nguyenngocquyet.duancuatoi.dto.request.CreateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.request.UpdateUserRequest;
+import com.nguyenngocquyet.duancuatoi.dto.respon.ApiRespon;
 import com.nguyenngocquyet.duancuatoi.entity.User;
+import com.nguyenngocquyet.duancuatoi.exception.AppException;
+import com.nguyenngocquyet.duancuatoi.exception.ErrorCode;
 import com.nguyenngocquyet.duancuatoi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +24,7 @@ public class UserService {
         User user = new User();
 
         if(userRepository.existsUserByUsername(request.getUsername())) {
-            throw new RuntimeException("User exited.");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         user.setUsername(request.getUsername());
@@ -29,7 +32,6 @@ public class UserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setDob(request.getDob());
-
 
         return userRepository.save(user);
     }

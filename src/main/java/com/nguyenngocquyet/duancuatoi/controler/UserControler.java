@@ -2,6 +2,7 @@ package com.nguyenngocquyet.duancuatoi.controler;
 
 import com.nguyenngocquyet.duancuatoi.dto.request.CreateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.request.UpdateUserRequest;
+import com.nguyenngocquyet.duancuatoi.dto.respon.ApiRespon;
 import com.nguyenngocquyet.duancuatoi.entity.User;
 import com.nguyenngocquyet.duancuatoi.service.UserService;
 import jakarta.validation.Valid;
@@ -19,10 +20,14 @@ public class UserControler {
     private UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody @Valid CreateUserRequest request) {
+    public ApiRespon<User> createUser(@RequestBody @Valid CreateUserRequest request) {
 
+        ApiRespon<User> apiRespon = new ApiRespon<>();
         User  user = userService.createUser(request);
-        return user;
+
+        apiRespon.setMessage("success");
+        apiRespon.setResult(user);
+        return apiRespon;
     }
 
     @GetMapping
