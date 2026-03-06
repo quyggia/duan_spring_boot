@@ -4,6 +4,7 @@ import com.nguyenngocquyet.duancuatoi.dto.request.CreateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.request.UpdateUserRequest;
 import com.nguyenngocquyet.duancuatoi.entity.User;
 import com.nguyenngocquyet.duancuatoi.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class UserControler {
     private UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody CreateUserRequest request) {
+    public User createUser(@RequestBody @Valid CreateUserRequest request) {
 
         User  user = userService.createUser(request);
         return user;
