@@ -3,48 +3,42 @@ package com.nguyenngocquyet.duancuatoi.service;
 
 import com.nguyenngocquyet.duancuatoi.dto.request.CreateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.request.UpdateUserRequest;
-import com.nguyenngocquyet.duancuatoi.dto.respon.ApiRespon;
+import com.nguyenngocquyet.duancuatoi.dto.respon.UserResponse;
 import com.nguyenngocquyet.duancuatoi.entity.User;
 import com.nguyenngocquyet.duancuatoi.exception.AppException;
 import com.nguyenngocquyet.duancuatoi.exception.ErrorCode;
+import com.nguyenngocquyet.duancuatoi.mapper.UserMapper;
 import com.nguyenngocquyet.duancuatoi.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    final UserRepository userRepository;
 
+    final UserMapper userMapper;
     public User createUser(CreateUserRequest request) {
-
-        User user = new User();
-
         if(userRepository.existsUserByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
+        User user = userMapper.toUser(request);
 
         return userRepository.save(user);
     }
 
-    public User updateUser(String id, UpdateUserRequest request)
+    public UserResponse updateUser(String id, UpdateUserRequest request)
     {
-        User user = getUserById(id);
+        User user = userMapper.toUserResponse(getUserById(id));
+        userMapper.updateUser(user, request);
 
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setDob(request.getDob());
-
-        return userRepository.save(user);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     public void deleteUser(String id)
@@ -52,14 +46,24 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public List<User> getAllUsers()
+    public List<UserResponse> getAllUsers()
     {
-        return userRepository.findAll();
+        return userRepository.findAll()
+                .stream()
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .password(user.getPassword())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .dob(user.getDob())
+                        .build())
+                .toList();
     }
 
-    public User getUserById(String id)
+    public UserResponse getUserById(String id)
     {
-        return userRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("User not found"));
+        return userMapper.toUserResponse(userRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("User not found")));
     }
 }

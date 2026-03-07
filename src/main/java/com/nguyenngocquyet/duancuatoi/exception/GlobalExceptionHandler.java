@@ -5,13 +5,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import com.nguyenngocquyet.duancuatoi.dto.respon.ApiRespon;
+import com.nguyenngocquyet.duancuatoi.dto.respon.ApiResponse;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiRespon> handRuntime(Exception exception) {
-        ApiRespon apiRespon = new ApiRespon();
+    ResponseEntity<ApiResponse> handRuntime(Exception exception) {
+        ApiResponse apiRespon = new ApiResponse();
         apiRespon.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiRespon.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 //    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiRespon> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
         String enumKey = exception.getFieldError().getDefaultMessage();
 
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
         }
 
-        ApiRespon apiRespon = new ApiRespon();
+        ApiResponse apiRespon = new ApiResponse();
         apiRespon.setCode(errorCode.getCode());
         apiRespon.setMessage(errorCode.getMessage());
 
@@ -50,9 +50,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiRespon> handleAppException(AppException exception) {
+    ResponseEntity<ApiResponse> handleAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiRespon apiRespon = new ApiRespon();
+        ApiResponse apiRespon = new ApiResponse();
         apiRespon.setCode(errorCode.getCode());
         apiRespon.setMessage(errorCode.getMessage());
 

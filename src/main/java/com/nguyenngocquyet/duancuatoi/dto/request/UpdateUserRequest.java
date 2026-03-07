@@ -1,33 +1,25 @@
 package com.nguyenngocquyet.duancuatoi.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
 import java.time.LocalDate;
 
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateUserRequest {
-    private String firstName;
-    private String lastName;
-    private LocalDate dob;
+    @NotBlank(message = "FIRSTNAME_REQUIRED")
+    String firstName;
 
-    public String getFirstName() {
-        return firstName;
-    }
+    @NotBlank(message = "LASTNAME_REQUIRED")
+    String lastName;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public LocalDate getDob() {
-        return dob;
-    }
-
-    public void setDob(LocalDate dob) {
-        this.dob = dob;
-    }
+    @Past(message = "DOB_MUST_BE_IN_THE_PAST")
+    LocalDate dob;
 }
