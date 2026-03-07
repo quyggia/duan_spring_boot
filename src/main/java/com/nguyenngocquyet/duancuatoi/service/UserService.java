@@ -11,7 +11,10 @@ import com.nguyenngocquyet.duancuatoi.mapper.UserMapper;
 import com.nguyenngocquyet.duancuatoi.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;import org.springframework.stereotype.Service;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -30,6 +33,8 @@ public class UserService {
 
         User user = userMapper.toUser(request);
 
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(user);
     }
 
@@ -43,6 +48,8 @@ public class UserService {
 
     public void deleteUser(String id)
     {
+
+        getUserById(id);
         userRepository.deleteById(id);
     }
 
