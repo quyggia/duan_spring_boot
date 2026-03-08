@@ -5,6 +5,7 @@ import com.nguyenngocquyet.duancuatoi.dto.request.CreateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.request.UpdateUserRequest;
 import com.nguyenngocquyet.duancuatoi.dto.respon.UserResponse;
 import com.nguyenngocquyet.duancuatoi.entity.User;
+import com.nguyenngocquyet.duancuatoi.enums.Role;
 import com.nguyenngocquyet.duancuatoi.exception.AppException;
 import com.nguyenngocquyet.duancuatoi.exception.ErrorCode;
 import com.nguyenngocquyet.duancuatoi.mapper.UserMapper;
@@ -12,10 +13,12 @@ import com.nguyenngocquyet.duancuatoi.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -26,6 +29,8 @@ public class UserService {
     final UserRepository userRepository;
 
     final UserMapper userMapper;
+
+    final PasswordEncoder passwordEncoder;
     public User createUser(CreateUserRequest request) {
         if(userRepository.existsUserByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -33,8 +38,12 @@ public class UserService {
 
         User user = userMapper.toUser(request);
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        user.setRoles(roles);
+
+
         return userRepository.save(user);
     }
 
@@ -60,10 +69,10 @@ public class UserService {
                 .map(user -> UserResponse.builder()
                         .id(user.getId())
                         .username(user.getUsername())
-                        .password(user.getPassword())
                         .firstName(user.getFirstName())
                         .lastName(user.getLastName())
                         .dob(user.getDob())
+                        .roles(user.getRoles())
                         .build())
                 .toList();
     }
