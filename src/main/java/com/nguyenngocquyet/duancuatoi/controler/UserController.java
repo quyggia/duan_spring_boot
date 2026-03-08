@@ -43,6 +43,15 @@ public class UserController {
        return apiResponse;
     }
 
+    @GetMapping("/my-info")
+    public ApiResponse<UserResponse> getMyInfo() {
+        UserResponse userResponse =  userService.getMyInfo();
+        return ApiResponse.<UserResponse>builder()
+                .message("success")
+                .result(userResponse)
+                .build();
+    }
+
     @PostMapping("/{userId}")
     public ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
